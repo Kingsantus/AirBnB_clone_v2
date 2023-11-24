@@ -23,3 +23,15 @@ class Place(BaseModel, Base):
 
     user = relationship('User')
     city = relationship('City')
+
+    if storage_type == 'db':
+        reviews = relationship('Review', cascade='all, delete-orphan', backref='place')
+
+
+    else:
+        @property
+        def reviews(self):
+            """ Getter attribute for reviews """
+            all_reviews = models.storage.all(Review)
+            place_reviews = [review for review in all_reviews.values() if review.place_id == self.id]
+            return place_reviews
