@@ -2,7 +2,8 @@
 """ Console Module """
 import cmd
 import sys
-from models.base_model import BaseModel
+import shlex
+from models.base_model import BaseModel, Base
 from models.__init__ import storage
 from models.user import User
 from models.place import Place
@@ -114,29 +115,46 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Create an object of any class"""
-        args_list = args.split(" ")
-        class_name = args_list[0]
-        attributes = {}
-
-        if not class_name:
+        """ Create an object of any class"""
+        if not args:
             print("** class name missing **")
             return
-        elif class_name not in HBNBCommand.classes:
+        args_list = args.split()
+        class_name = args_list[0]
+
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        if len(args_list) > 1:
-            for item in args_list[1:]:
-                key, value = item.split("=")
-                attributes[key] = value.strip("\"'").replace("_", " ")
+        params = {}
+        for param in args_list[1:]:
+            match = re.match(r'^(\w+)=(.+)$', param)
+            if match:
+                key, value = match.groups()
+                key = key.replace("_", " ")
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1].replace('\\"', '"')
+                elif '.' in value:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        print(f"** invalid value for parameter '{key}' **")
+                        continue
+                else:
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        print(f"** invalid value for parameter '{key}' **")
+                        continue
+
+                params[key] = value
+            else:
+                print(f"** invalid parameter syntax: {param} **")
 
         new_instance = HBNBCommand.classes[class_name]()
-        for key, value in attributes.items():
-            setattr(new_instance, key, value)
         storage.save()
         print(new_instance.id)
-
+        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
