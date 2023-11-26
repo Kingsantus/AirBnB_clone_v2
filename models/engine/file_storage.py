@@ -1,13 +1,6 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
-from models.base_model import BaseModel, Base
-from models.user import User
-from models.place import Place
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.review import Review
 
 
 class FileStorage:
@@ -15,22 +8,18 @@ class FileStorage:
     __file_path = 'file.json'
     __objects = {}
 
+    
     def all(self, cls=None):
         """
+        Returns a dictionary of all objects, or a filtered dictionary based on the class name.
         Args:
-            cls: class type of an object
-
-        Return:
-            a dictionary of objects of one type of class if cls is not None;
-            else a dictionary of all objects
+            cls (str, optional): Class name for filtering. Defaults to None.
+        Returns:
+            dict: A dictionary containing objects of the specified class or all objects.
         """
-        if cls:
-            if isinstance(cls, str):
-                cls = globals().get(cls)
-            if cls and issubclass(cls, BaseModel):
-                cls_dict = {k: v for k, v in self.__objects.items() if isinstance(v, cls)}
-                return cls_dict
-        return FileStorage.__objects
+        if cls is not None:
+            return {k: v for k, v in self.__objects.items() if type(v).__name__ == cls}
+        return self.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -67,21 +56,16 @@ class FileStorage:
                 for key, val in temp.items():
                         self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
+
             pass
 
     def delete(self, obj=None):
         """
-        Deletes an object from a __objects if it is inside
-
+        Deletes an object from __objects if it exists.
         Args:
-            obj: object to be deleted
+            obj (BaseModel, optional): The object to be deleted. Defaults to None.
         """
-        if obj is None:
-            return
-        obj_to_del = f"{obj.__class__.__name__}.{obj.id}"
+        if obj is not None and obj.id in self.__objects:
+            del self.__objects[obj.id]
 
-        try:
-            del FileStorage.__objects[key]
-        except (AttributeError, KeyError):
-            pass
 
