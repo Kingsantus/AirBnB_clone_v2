@@ -13,7 +13,7 @@ def display():
 
 @app.route("/hbnb", strict_slashes=False)
 def hbnb():
-    """Displays 'HBNB'."""
+    """ Returns message to be displayed """
     return "HBNB"
 
 
