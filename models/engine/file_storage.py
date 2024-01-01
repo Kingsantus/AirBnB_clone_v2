@@ -3,6 +3,7 @@
 import json
 
 
+
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
@@ -68,4 +69,7 @@ class FileStorage:
         if obj is not None and obj.id in self.__objects:
             del self.__objects[obj.id]
 
-
+    def close(self):
+        """ calls reload()
+        """
+        self.reload()
