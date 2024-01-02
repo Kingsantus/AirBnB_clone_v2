@@ -10,7 +10,7 @@ association_table = Table('place_amenity', Base.metadata,
                          )
 
 class Amenity(BaseModel, Base):
-      """ Amenity class to store amenity information """
+    """ Amenity class to store amenity information """
     __tablename__ = 'amenities'
 
     name = Column(String(128), nullable=False)

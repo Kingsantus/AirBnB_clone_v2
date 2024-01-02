@@ -42,7 +42,7 @@ class Place(BaseModel, Base):
             place_reviews = [review for review in all_reviews.values() if review.place_id == self.id]
             return place_reviews
 
-                @property
+        @property
         def amenities(self):
             """ Getter attribute for amenities """
             all_amenities = storage.all(Amenity)
