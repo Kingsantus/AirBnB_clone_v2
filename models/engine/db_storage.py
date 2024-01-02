@@ -37,7 +37,7 @@ class DBStorage:
                 objs_list = self.__session.query(cls).all()
         else:
             for subclass in Base.__subclasses__():
-                obj_list.extend(self.__session.query(subclass).all())
+                objs_list.extend(self.__session.query(subclass).all())
         result = {}
         for obj in objs_list:
             key = "{}.{}".format(obj.__class__.__name__, obj.id)
